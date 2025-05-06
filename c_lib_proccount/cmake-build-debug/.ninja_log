@@ -1,0 +1,4 @@
+# ninja log v6
+1	183	7682590192822928	build.ninja	607d277541b4a415
+3	489	7682557501217343	CMakeFiles/proccount.dir/proccount.c.obj	1f14d6c0f8d1b26
+490	549	7682557506082404	libproccount.a	d65cd69efe25cd14
