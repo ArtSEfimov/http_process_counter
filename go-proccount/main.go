@@ -1,14 +1,11 @@
 package main
 
-/*
-#cgo CFLAGS:  -I./proccount
-#cgo LDFLAGS: -L./proccount -lproccount
-#include "proccount.h"
-*/
-import "C"
-import "fmt"
+import (
+	"go-proccount/process_counter"
+	"go-proccount/system_uptime"
+)
 
 func main() {
-	count := C.countProcessesWin()
-	fmt.Printf("Processes: %d\n", count)
+	process_counter.ProcessCounter()
+	system_uptime.GetSystemUptime()
 }
