@@ -21,32 +21,32 @@ func NewCPUStats() CPUStats {
 	}
 }
 
-func GetCPUStats() error {
+func GetCPUStats(duration time.Duration) error {
 	startCPUStats := NewCPUStats()
 	if !startCPUStats.Success {
 		return BadRequestToCPUStatistic
 	}
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(duration)
 
 	currentCPUStats := NewCPUStats()
 
 	if !currentCPUStats.Success {
 		return BadRequestToCPUStatistic
 	}
-	tot, usr, ker := calculateUsage(startCPUStats, currentCPUStats)
+	total, user, kernel := calculateUsage(startCPUStats, currentCPUStats)
 
-	fmt.Printf("CPU Usage — total: %.1f%%, user: %.1f%%, kernel: %.1f%%\n", tot, usr, ker)
+	fmt.Printf("CPU Usage — total: %.1f%%, user: %.1f%%, kernel: %.1f%%\n", total, user, kernel)
 	return nil
 }
 
 func calculateUsage(start, current CPUStats) (totalPct, userPct, kernelPct float64) {
-	// сколько тиков добавилось
+
 	idleDelta := float64(current.IdleTime - start.IdleTime)
 	kernelDelta := float64(current.KernelTime - start.KernelTime)
 	userDelta := float64(current.UserTime - start.UserTime)
 
-	busy := kernelDelta + userDelta
+	busy := (kernelDelta + userDelta) - idleDelta
 	total := busy + idleDelta
 
 	if total > 0 {
@@ -54,7 +54,7 @@ func calculateUsage(start, current CPUStats) (totalPct, userPct, kernelPct float
 	}
 	if busy > 0 {
 		userPct = userDelta / busy * 100
-		kernelPct = kernelDelta / busy * 100
+		kernelPct = (kernelDelta - idleDelta) / busy * 100
 	}
 	return
 }
