@@ -36,7 +36,7 @@ func GetCPUStats(duration time.Duration) error {
 	}
 	total, user, kernel := calculateUsage(startCPUStats, currentCPUStats)
 
-	fmt.Printf("CPU Usage — total: %.1f%%, user: %.1f%%, kernel: %.1f%%\n", total, user, kernel)
+	fmt.Printf("CPU usage: total: %.1f%%, user: %.1f%%, kernel: %.1f%%\n", total, user, kernel)
 	return nil
 }
 
@@ -57,4 +57,16 @@ func calculateUsage(start, current CPUStats) (totalPct, userPct, kernelPct float
 		kernelPct = (kernelDelta - idleDelta) / busy * 100
 	}
 	return
+}
+
+func GetAverageCPULoad() error {
+	startCPUStats := NewCPUStats()
+	if !startCPUStats.Success {
+		return BadRequestToCPUStatistic
+	}
+	busy := startCPUStats.UserTime + startCPUStats.KernelTime - startCPUStats.IdleTime
+	avg := float64(busy) / float64(busy+startCPUStats.IdleTime) * 100
+
+	fmt.Printf("Average CPU load since boot: %.2f%%", avg)
+	return nil
 }
