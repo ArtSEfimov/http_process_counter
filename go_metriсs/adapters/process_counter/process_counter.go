@@ -7,9 +7,7 @@ package process_counter
 */
 import "C"
 
-import "fmt"
-
-func ProcessCounter() {
-	count := C.countProcessesWin()
-	fmt.Printf("Processes: %d\n", count)
+func ProcessCounter() uint64 {
+	count := uint64(C.countProcessesWin())
+	return count
 }

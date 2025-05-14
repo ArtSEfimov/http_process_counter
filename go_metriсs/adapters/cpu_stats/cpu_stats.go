@@ -7,7 +7,8 @@ package cpu_stats
 */
 import "C"
 import (
-	"fmt"
+	"go-proccount/pkg/di"
+	"go-proccount/pkg/utils"
 	"time"
 )
 
@@ -21,7 +22,7 @@ func NewCPUStats() CPUStats {
 	}
 }
 
-func GetCPUStats(duration time.Duration) error {
+func GetCPUStats(duration time.Duration, CPUPayload *di.CPUInfo) error {
 	startCPUStats := NewCPUStats()
 	if !startCPUStats.Success {
 		return BadRequestToCPUStatistic
@@ -36,7 +37,10 @@ func GetCPUStats(duration time.Duration) error {
 	}
 	total, user, kernel := calculateUsage(startCPUStats, currentCPUStats)
 
-	fmt.Printf("CPU usage: total: %.1f%%, user: %.1f%%, kernel: %.1f%%\n", total, user, kernel)
+	CPUPayload.TotalLoad = utils.Round(total, 2)
+	CPUPayload.UserLoad = utils.Round(user, 2)
+	CPUPayload.KernelLoad = utils.Round(kernel, 2)
+
 	return nil
 }
 
@@ -59,14 +63,13 @@ func calculateUsage(start, current CPUStats) (totalPct, userPct, kernelPct float
 	return
 }
 
-func GetAverageCPULoad() error {
+func GetAverageCPULoad() (float64, error) {
 	startCPUStats := NewCPUStats()
 	if !startCPUStats.Success {
-		return BadRequestToCPUStatistic
+		return 0, BadRequestToCPUStatistic
 	}
 	busy := startCPUStats.UserTime + startCPUStats.KernelTime - startCPUStats.IdleTime
 	avg := float64(busy) / float64(busy+startCPUStats.IdleTime) * 100
 
-	fmt.Printf("Average CPU load since boot: %.2f%%", avg)
-	return nil
+	return avg, nil
 }

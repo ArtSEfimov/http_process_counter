@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func GetSystemUptime() {
+func GetSystemUptime() string {
 	rowSeconds := uint64(C.getSystemUptimeSec())
 
 	duration := time.Duration(rowSeconds) * time.Second
@@ -21,6 +21,6 @@ func GetSystemUptime() {
 	minutes := int(duration.Minutes()) % 60
 	seconds := int(duration.Seconds()) % 60
 
-	fmt.Printf("System Uptime: %02d:%02d:%02d\n", hours, minutes, seconds)
+	return fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds)
 
 }
