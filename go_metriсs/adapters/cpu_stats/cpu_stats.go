@@ -9,6 +9,7 @@ import "C"
 import (
 	"go-proccount/pkg/di"
 	"go-proccount/pkg/utils"
+	"log"
 	"time"
 )
 
@@ -41,6 +42,13 @@ func GetCPUStats(duration time.Duration, CPUPayload *di.CPUInfo) error {
 	CPUPayload.UserLoad = utils.Round(user, 2)
 	CPUPayload.KernelLoad = utils.Round(kernel, 2)
 
+	avg, cpuAvgLoadError := getAverageCPULoad()
+	if cpuAvgLoadError != nil {
+		log.Println(cpuAvgLoadError.Error())
+	}
+
+	CPUPayload.AverageLoadSinceStart = utils.Round(avg, 2)
+
 	return nil
 }
 
@@ -63,7 +71,7 @@ func calculateUsage(start, current CPUStats) (totalPct, userPct, kernelPct float
 	return
 }
 
-func GetAverageCPULoad() (float64, error) {
+func getAverageCPULoad() (float64, error) {
 	startCPUStats := NewCPUStats()
 	if !startCPUStats.Success {
 		return 0, BadRequestToCPUStatistic
