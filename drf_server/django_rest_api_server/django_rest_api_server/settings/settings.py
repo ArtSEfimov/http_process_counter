@@ -36,7 +36,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
+
+    'django_celery_results',
+
     'metrics',
 ]
 
@@ -74,8 +78,12 @@ WSGI_APPLICATION = 'django_rest_api_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',  # движок для Postgres
+        'NAME': 'metrics_db',  # имя вашей БД
+        'USER': 'metrics_user',  # пользователь БД
+        'PASSWORD': 'metrics_password',  # его пароль
+        'HOST': 'localhost',  # или IP-адрес сервера БД
+        'PORT': '5432',  # стандартный порт Postgres
     }
 }
 
