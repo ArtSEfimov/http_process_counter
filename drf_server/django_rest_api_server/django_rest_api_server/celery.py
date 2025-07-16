@@ -11,3 +11,5 @@ celery_app = Celery('metrics')
 celery_app.config_from_object(celery_settings, namespace='CELERY')
 
 celery_app.autodiscover_tasks()
+
+celery_app.conf.beat_schedule = celery_settings.CELERY_BEAT_SCHEDULE
