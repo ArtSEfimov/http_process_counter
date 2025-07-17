@@ -75,17 +75,22 @@ WSGI_APPLICATION = 'django_rest_api_server.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # движок для Postgres
-        'NAME': 'metrics_db',  # имя вашей БД
-        'USER': 'metrics_user',  # пользователь БД
-        'PASSWORD': 'metrics_password',  # его пароль
-        'HOST': 'localhost',  # или IP-адрес сервера БД
-        'PORT': '5432',  # стандартный порт Postgres
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',  # движок для Postgres
+#         'NAME': 'metrics_db',  # имя вашей БД
+#         'USER': 'metrics_user',  # пользователь БД
+#         'PASSWORD': 'metrics_password',  # его пароль
+#         'HOST': 'localhost',  # или IP-адрес сервера БД
+#         'PORT': '5432',  # стандартный порт Postgres
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

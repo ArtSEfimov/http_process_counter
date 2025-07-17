@@ -6,19 +6,15 @@ from requests import Session
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from .serializers import CPUMetricsSerializer, SystemUptimeSerializer, ProcessCountSerializer
+
 load_dotenv()
 
-
-@shared_task
-def fetch_and_store_all_metrics():
-    get_all_metrics()
-
-
-@shared_task
-def fetch_and_store_detail_metrics():
-    get_processes_count_metric()
-    get_cpu_metrics()
-    get_system_uptime_metric()
+URLs = {
+    "CPU_METRICS_URL": CPUMetricsSerializer,
+    "PROCESSES_COUNT_METRICS_URL": ProcessCountSerializer,
+    "SYSTEM_UPTIME_METRICS_URL": SystemUptimeSerializer,
+}
 
 
 def get_configured_session():
@@ -35,46 +31,34 @@ def get_configured_session():
     return session
 
 
-def get_all_metrics():
-    url = getenv("ALL_METRICS_URL")
+def construct_url(url):
+    base_url = getenv("BASE_URL")
+    port = getenv("METRICS_API_PORT")
+
+    return f"{base_url}:{port}{url}"
+
+
+def request(url):
     session = get_configured_session()
     response = session.get(url)
     if response.ok:
-        data = response.json()
-        print("Ответ:", data)
-    else:
-        print("Ошибка запроса:", response.status_code, response.text)
+        return response.json()
+
+    return {'status_code': response.status_code, 'body': response.text}
 
 
-def get_processes_count_metric():
-    url = getenv("CPU_METRICS_URL")
-    session = get_configured_session()
-    response = session.get(url)
-    if response.ok:
-        data = response.json()
-        print("Ответ:", data)
-    else:
-        print("Ошибка запроса:", response.status_code, response.text)
+@shared_task
+def fetch_and_store_all_metrics():
+    url = construct_url(getenv("ALL_METRICS_URL"))
+    return {url: request(url)}
 
 
-def get_cpu_metrics():
-    url = getenv("PROCESSES_COUNT_METRICS_URL")
-    session = get_configured_session()
-    response = session.get(url)
-    if response.ok:
-        data = response.json()
-        print("Ответ:", data)
-    else:
-        print("Ошибка запроса:", response.status_code, response.text)
-
-
-def get_system_uptime_metric():
-    url = getenv("SYSTEM_UPTIME_METRICS_URL")
-    session = get_configured_session()
-    response = session.get(url)
-    if response.ok:
-        data = response.json()
+@shared_task
+def fetch_and_store_detail_metrics():
+    response = dict()
+    for url, serializer in URLs:
+        # TODO
+        response[url] = request(url)
         # TODO save to DB
-        return data
-    else:
-        return {'status_code': response.status_code, 'body': response.text}
+
+    return response
