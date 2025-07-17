@@ -5,8 +5,12 @@ CELERY_RESULT_BACKEND = 'django-db'
 
 # расписание получения метрик из Go API
 CELERY_BEAT_SCHEDULE = {
-    'fetch-metrics': {
-        'task': 'metrics.tasks.fetch_and_store_metric',
+    'fetch-all-metrics': {
+        'task': 'metrics.tasks.fetch_and_store_all_metrics',
         'schedule': crontab(minute='*/5'),
+    },
+    'fetch-detail-metrics': {
+        'task': 'metrics.tasks.fetch_and_store_detail_metrics',
+        'schedule': crontab(minute='*/1'),
     }
 }
