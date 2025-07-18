@@ -56,9 +56,11 @@ def fetch_and_store_all_metrics():
 @shared_task
 def fetch_and_store_detail_metrics():
     response = dict()
-    for url, serializer in URLs:
-        # TODO
+    for url, serializer_class in URLs:
         response[url] = request(url)
-        # TODO save to DB
+        serializer = serializer_class(data=response)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            response[url] = serializer.data
 
     return response

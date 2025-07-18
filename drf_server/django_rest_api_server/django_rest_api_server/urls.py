@@ -22,4 +22,7 @@ from metrics.views import AllMetricsView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/all_metrics/', AllMetricsView.as_view()),
+    path('api/cpu_metrics/', AllMetricsView.as_view()),
+    path('api/processes_metrics/', AllMetricsView.as_view()),
+    path('api/uptime_metrics/', AllMetricsView.as_view()),
 ]

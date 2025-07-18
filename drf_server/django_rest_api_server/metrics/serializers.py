@@ -21,7 +21,7 @@ class SystemUptimeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class AllMetricsSerializer(CPUMetricsSerializer, ProcessCountSerializer, SystemUptimeSerializer):
-    cpu_metrics = CPUMetricsSerializer(read_only=True)
-    process_count = ProcessCountSerializer(read_only=True)
-    system_uptime = SystemUptimeSerializer(read_only=True)
+class AllMetricsSerializer(serializers.Serializer):
+    cpu_metrics = CPUMetricsSerializer(many=True, read_only=True)
+    process_counts = ProcessCountSerializer(many=True, read_only=True)
+    uptimes = SystemUptimeSerializer(many=True, read_only=True)
